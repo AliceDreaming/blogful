@@ -9,9 +9,27 @@
     </div>
     <div class="col-md-10">
         <h1>
-            {{ entry.title }}
+            <a href="{{ url_for('view_post', post_id = entry.id) }}">{{ entry.title }}</a>
         </h1>
         {{ entry.content | markdown }}
+    </div>
+</div>
+{% endmacro %}
+
+{% macro render_post(post) %}
+<div class="row">
+    <div class="col-md-2 text-right metadata">
+        <ul class="list-unstyled">
+            <li>
+                {{ post.datetime | dateformat("%d/%m/%y") }}
+            </li>
+        </ul>
+    </div>
+    <div class="col-md-10">
+        <h1>
+            {{ post.title }}
+        </h1>
+        {{ post.content | markdown }}
     </div>
 </div>
 {% endmacro %}
