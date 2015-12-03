@@ -17,6 +17,7 @@ import datetime
 from sqlalchemy import Column, Integer, String, Text, DateTime
 
 from .database import Base, engine
+from sqlalchemy import ForeignKey
 
 class Entry(Base):
     __tablename__ = "entries"
@@ -25,5 +26,5 @@ class Entry(Base):
     title = Column(String(1024))
     content = Column(Text)
     datetime = Column(DateTime, default=datetime.datetime.now)
-
+    
 Base.metadata.create_all(engine)

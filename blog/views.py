@@ -3,6 +3,9 @@ from flask import render_template
 from blog import app
 from .database import session, Entry
 from flask import request, redirect, url_for
+from flask.ext.login import login_required
+from flask.ext.login import current_user
+import mistune
 
 PAGINATE_BY = 10
 
@@ -51,24 +54,47 @@ def edit_entry_post(post_id):
     session.commit()
     return redirect(url_for("view_post", post_id=post_id))
 
-@app.route("/post/<int:post_id>/delete", methods=["DELETE"])
-def delete_entry_post(post_id):
+@app.route("/post/<int:post_id>/delete", methods=["GET"])
+def delete_entry(post_id):
     entry = session.query(Entry).filter(Entry.id == post_id).first()
     session.delete(entry)
     session.commit()
     return redirect(url_for("entries"))
 
 @app.route("/entry/add", methods=["GET"])
+@login_required
 def add_entry_get():
     return render_template("add_entry.html")
 
 @app.route("/entry/add", methods=["POST"])
+@login_required
 def add_entry_post():
-    entry = Entry(
+    post = Entry(
         title=request.form["title"],
-        content=request.form["content"],
+        content=mistune.markdown(request.form["content"]),
+        author=current_user
     )
-    session.add(entry)
+    session.add(post)
     session.commit()
-    return redirect(url_for("entries"))
+    return redirect(url_for("posts"))
     
+@app.route("/login", methods=["GET"])
+def login_get():
+    return render_template("login.html")
+    
+from flask import flash
+from flask.ext.login import login_user
+from werkzeug.security import check_password_hash
+from .models import User
+
+@app.route("/login", methods=["POST"])
+def login_post():
+    email = request.form["email"]
+    password = request.form["password"]
+    user = session.query(User).filter_by(email=email).first()
+    if not user or not check_password_hash(user.password, password):
+        flash("Incorrect username or password", "danger")
+        return redirect(url_for("login_get"))
+
+    login_user(user)
+    return redirect(request.args.get('next') or url_for("entries"))
