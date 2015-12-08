@@ -29,8 +29,8 @@
         <h1>
             {{ post.title }}
         </h1>
-        <p>{{ post.author.name }}</p>
         <p>{{ post.content | markdown }}</p>
+        <p>{{ post.author.name }}</p>
     </div>
 </div>
 {% endmacro %}

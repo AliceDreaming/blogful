@@ -13,14 +13,13 @@ class User(Base, UserMixin):
     name = Column(String(128))
     email = Column(String(128), unique=True)
     password = Column(String(128))
-    posts = relationship("Post", backref="author")
+    entries = relationship("Entry", backref="author")
 
-class Post(Base):
-    __tablename__ = "posts"
+class Entry(Base):
+    __tablename__ = "entries"
 
     id = Column(Integer, primary_key=True)
     title = Column(String(1024))
     content = Column(Text)
     datetime = Column(DateTime, default=datetime.datetime.now)
     author_id = Column(Integer, ForeignKey('users.id'))
-    

@@ -1,7 +1,8 @@
 from flask import render_template
 
 from blog import app
-from .database import session, Entry
+from .database import session
+from .models import Entry
 from flask import request, redirect, url_for
 from flask.ext.login import login_required
 from flask.ext.login import current_user
@@ -69,14 +70,14 @@ def add_entry_get():
 @app.route("/entry/add", methods=["POST"])
 @login_required
 def add_entry_post():
-    post = Entry(
+    entry = Entry(
         title=request.form["title"],
-        content=mistune.markdown(request.form["content"]),
+        content=request.form["content"],
         author=current_user
     )
-    session.add(post)
+    session.add(entry)
     session.commit()
-    return redirect(url_for("posts"))
+    return redirect(url_for("entries"))
     
 @app.route("/login", methods=["GET"])
 def login_get():
