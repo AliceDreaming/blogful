@@ -36,6 +36,18 @@ class TestViews(unittest.TestCase):
             http_session["user_id"] = str(self.user.id)
             http_session["_fresh"] = True
 
+    def simulate_add_entry(self, title, content):
+        """
+        define this method to add test data for edit and delete workflow
+        """
+        entry = Entry(
+            title=title,
+            content=content
+        )
+        session.add(entry)
+        session.commit()
+        return entry.id
+
     def test_add_entry(self):
         self.simulate_login()
 
@@ -53,6 +65,44 @@ class TestViews(unittest.TestCase):
         self.assertEqual(entry.title, "Test Entry")
         self.assertEqual(entry.content, "Test content")
         self.assertEqual(entry.author, self.user)
+        
+    def test_edit_entry(self):
+        title ="Launch your career as a web developer with 1-on-1 mentorship"
+        content = """Serious about becoming an engineer but unsure about committing to 
+        a time consuming and expensive bootcamp? Our Web Development Career Path course 
+        was designed with one goal: to get you hired. You\'ll work with a mentor, 1-on-1, 
+        every step of the way. You\'ll also get unlimited access to expert-led Workshops 
+        and Q&A Sessions when you're stuck or want to learn more."""
+        entry_id = self.simulate_add_entry(title, content)
+        
+        edit_url = "/post/{}/edit".format(entry_id)
+        edit_content = {
+            "title": "Learning python in thinkful",
+            "content": "My mentor is Jesse Bangs"
+            }
+        response = self.client.post(edit_url, data = edit_content)
+            
+        self.assertEqual(response.status_code, 302)
+        entries = session.query(Entry).filter(Entry.id == entry_id).all()
+        self.assertEqual(len(entries), 1)
+        entry = entries[0]
+        self.assertEqual(entry.title, edit_content["title"])
+        self.assertEqual(entry.content, edit_content["content"])
+
+    def test_delete_entry(self):
+        title ="Launch your career as a web developer with 1-on-1 mentorship"
+        content = """Serious about becoming an engineer but unsure about committing to 
+        a time consuming and expensive bootcamp? Our Web Development Career Path course 
+        was designed with one goal: to get you hired. You\'ll work with a mentor, 1-on-1, 
+        every step of the way. You\'ll also get unlimited access to expert-led Workshops 
+        and Q&A Sessions when you're stuck or want to learn more."""
+        entry_id = self.simulate_add_entry(title, content)
+        
+        delete_url = "/post/{}/delete".format(entry_id)
+        response = self.client.get(delete_url)
+        self.assertEqual(response.status_code, 302)
+        entries = session.query(Entry).filter(Entry.id == entry_id).all()
+        self.assertEqual(len(entries), 0)
         
 if __name__ == "__main__":
     unittest.main()
