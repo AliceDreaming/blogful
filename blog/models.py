@@ -23,3 +23,5 @@ class Entry(Base):
     content = Column(Text)
     datetime = Column(DateTime, default=datetime.datetime.now)
     author_id = Column(Integer, ForeignKey('users.id'))
+    
+Base.metadata.create_all(engine)
