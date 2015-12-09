@@ -56,6 +56,7 @@ def edit_entry_post(post_id):
     return redirect(url_for("view_post", post_id=post_id))
 
 @app.route("/post/<int:post_id>/delete", methods=["GET"])
+@login_required
 def delete_entry(post_id):
     entry = session.query(Entry).filter(Entry.id == post_id).first()
     session.delete(entry)

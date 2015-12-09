@@ -1,4 +1,4 @@
-import os
+"""import os
 import unittest
 import datetime
 
@@ -23,3 +23,4 @@ class FilterTests(unittest.TestCase):
 
 if '__name__' == '__main__':
     unittest.main()
+"""
