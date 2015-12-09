@@ -90,6 +90,8 @@ class TestViews(unittest.TestCase):
         self.assertEqual(entry.content, edit_content["content"])
 
     def test_delete_entry(self):
+        self.simulate_login()
+        
         title ="Launch your career as a web developer with 1-on-1 mentorship"
         content = """Serious about becoming an engineer but unsure about committing to 
         a time consuming and expensive bootcamp? Our Web Development Career Path course 

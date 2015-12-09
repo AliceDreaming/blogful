@@ -1,4 +1,5 @@
-"""import os
+"""
+import os
 import unittest
 import multiprocessing
 import time
@@ -16,7 +17,6 @@ from blog.models import User
 
 class TestViews(unittest.TestCase):
     def setUp(self):
-        """ Test setup """
         self.browser = Browser("phantomjs")
 
         # Set up the tables in the database
@@ -34,7 +34,6 @@ class TestViews(unittest.TestCase):
 
 
     def tearDown(self):
-        """ Test teardown """
         # Remove the tables and their data from the database
         self.process.terminate()
         session.close()
